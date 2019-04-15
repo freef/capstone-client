@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import './App.scss'
+import Canvas from './paint/canvas.js'
 
 class App extends Component {
   constructor () {
@@ -11,26 +12,42 @@ class App extends Component {
       moueY: 0.0,
       clickX: [],
       clickY: [],
-      clickDrag: []
+      clickDrag: [],
+      clickColor: [],
+      clickSize: [],
+      color: {
+        r: 0,
+        b: 0,
+        g: 0
+      },
+      brushSize: 3
     }
   }
 
+  onColorChange = (event) => this.setState({ color: { ...this.state.color, [event.target.id]: event.target.value } })
+
+  onSizeChange = (event) => this.setState({ brushSize: event.target.value })
+
   addClick = (x, y, dragging = false) => {
+    const curColor = `rgba(${this.state.color.r},${this.state.color.g},${this.state.color.b})`
+    const curSize = this.state.brushSize
     const clickX = this.state.clickX
     const clickY = this.state.clickY
     const clickDrag = this.state.clickDrag
     clickX.push(x)
     clickY.push(y)
     clickDrag.push(dragging)
+    this.state.clickColor.push(curColor)
+    this.state.clickSize.push(curSize)
   }
 
   redraw =() => {
+    console.log(this.state.color)
     const clickX = this.state.clickX
     const clickY = this.state.clickY
     const clickDrag = this.state.clickDrag
     const context = this.state.context
     context.clearRect(0, 0, context.canvas.width, context.canvas.height) // Clears the canvas
-    context.strokeStyle = '#df4b26'
     context.lineJoin = 'round'
     context.lineWidth = 5
 
@@ -43,6 +60,8 @@ class App extends Component {
       }
       context.lineTo(clickX[i], clickY[i])
       context.closePath()
+      context.strokeStyle = this.state.clickColor[i]
+      context.lineWidth = this.state.clickSize[i]
       context.stroke()
     }
   }
@@ -55,9 +74,6 @@ class App extends Component {
 
   onDraw = (e) => {
     if (this.paint) {
-      // console.log(e.screenX - e.nativeEvent.offsetX)
-      console.log(e.screenX)
-      console.log(e.nativeEvent.offsetX)
       this.addClick(e.nativeEvent.offsetX, e.nativeEvent.offsetY, true)
       this.redraw()
     }
@@ -71,22 +87,19 @@ class App extends Component {
    this.paint = false
  }
 
+ onSave = (e) => {
+   const canvas = document.getElementById('canvasInAPerfectWorld').toDataURL()
+   console.log(canvas)
+   window.open(canvas)
+ }
+
  componentDidMount () {
    this.setState({ context: document.getElementById('canvasInAPerfectWorld').getContext('2d') })
  }
  render () {
    return <React.Fragment>
-     <p>boop</p>
-     <canvas
-       className='blackborder'
-       id="canvasInAPerfectWorld"
-       width="700"
-       height="700"
-       onMouseDown={this.onStartPaint}
-       onMouseMove={this.onDraw.bind(this)}
-       onMouseUp={this.onStopPaint}
-       onMouseLeave={this.onMouseExit}>
-     </canvas>
+     <Canvas />
+     <Canvas />
    </React.Fragment>
  }
 }

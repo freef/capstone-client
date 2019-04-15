@@ -11,3 +11,19 @@ body {
 .blackborder {
   border: 2px black solid;
 }
+
+.coloroptions {
+  display: flex;
+  align-items: center;
+}
+
+.colorpicker {
+  height: 5rem;
+  width: 3rem;
+  margin: 1rem;
+}
+
+.colorsliders {
+  display: flex;
+  flex-direction: column;
+}
