@@ -1,9 +1,12 @@
 import React, { Component, Fragment } from 'react'
+import apiConfig from '../apiConfig.js'
+import axios from 'axios'
 
 class Canvas extends Component {
   constructor () {
     super()
     this.state = {
+      user: null,
       paint: true,
       context: null,
       mouseX: 0.0,
@@ -18,7 +21,8 @@ class Canvas extends Component {
         b: 0,
         g: 0
       },
-      brushSize: 3
+      brushSize: 30,
+      imgsrc: null
     }
   }
 
@@ -40,7 +44,6 @@ addClick = (x, y, dragging = false) => {
 }
 
 redraw =() => {
-  console.log(this.state.color)
   const clickX = this.state.clickX
   const clickY = this.state.clickY
   const clickDrag = this.state.clickDrag
@@ -65,6 +68,9 @@ redraw =() => {
 }
 
 onStartPaint = (e) => {
+  console.log(e)
+  console.log(e.type)
+  console.log(e.target)
   this.paint = true
   this.addClick(e.nativeEvent.offsetX, e.nativeEvent.offsetY)
   this.redraw()
@@ -78,6 +84,7 @@ onDraw = (e) => {
 }
 
 onStopPaint = (e) => {
+  // console.log(e.type)
   this.paint = false
 }
 
@@ -86,39 +93,57 @@ onMouseExit = (e) => {
 }
 
 onSave = (e) => {
+  event.preventDefault()
   const canvas = document.getElementById('canvasInAPerfectWorld').toDataURL()
   console.log(canvas)
-  window.open(canvas)
+  axios.post(`${apiConfig}/uploads`, { data: canvas, contentType: false, processData: false })
+    .then((responseData) => {
+      console.log(responseData)
+      this.setState({ imgsrc: responseData.data.upload.url })
+      return responseData
+    })
+    .catch(console.log)
 }
 
 componentDidMount () {
   this.setState({ context: document.getElementById('canvasInAPerfectWorld').getContext('2d') })
 }
 render () {
+  const colorpickerstyle = {
+    backgroundColor: `rgba(${this.state.color.r},${this.state.color.g},${this.state.color.b})`,
+    width: `${this.state.brushSize}px`,
+    height: `${this.state.brushSize}px`,
+    borderRadius: '100%'
+  }
   return <Fragment>
-    <p>boop</p>
+    <p>Draw Below!</p>
     <canvas
       className='blackborder'
       id="canvasInAPerfectWorld"
       width="700"
-      height="700"
+      height="650"
       onMouseDown={this.onStartPaint}
       onMouseMove={this.onDraw.bind(this)}
       onMouseUp={this.onStopPaint}
-      onMouseLeave={this.onMouseExit}>
+      onMouseLeave={this.onMouseExit}
+      onTouchMove={this.onDraw.bind(this)}
+      onTouchStart={this.onStartPaint}
+      onTouchEnd={this.onStopPaint}
+      onTouchCancel={this.onStopPaint}>
     </canvas>
     <div className='tools'>
       <div className='coloroptions'>
-        <div className="colorpicker" style={{ 'backgroundColor': `rgba(${this.state.color.r},${this.state.color.g},${this.state.color.b})` }}> </div>
+        <div className="colorpicker" style={ colorpickerstyle }> </div>
         <div className='colorsliders'>
           <label htmlFor='red'>Red <input name='red' onChange={this.onColorChange} type="range" min="0" max="255" defaultValue="0" className="slider" id="r" /></label>
           <label htmlFor='green'>Green <input name='green' onChange={this.onColorChange} type="range" min="0" max="255" defaultValue="0" className="slider" id="g" /></label>
           <label htmlFor='blue'>Blue< input name='blue' onChange={this.onColorChange} type="range" min="0" max="255" defaultValue="0" className="slider" id="b" /></label>
         </div>
       </div>
-      <label htmlFor='brush-size'>Brush Size< input name='brush-size' onChange={this.onSizeChange} type="range" min="1" max="100" defaultValue="2" className="slider" id="brushsize" /></label>
-      <button onClick={this.onSave}>Save</button>
+      <label htmlFor='brush-size'>Brush Size< input name='brush-size' onChange={this.onSizeChange} type="range" min="1" max="100" defaultValue="30" className="slider" id="brushsize" /></label>
+      <button onClick={this.onSave}>Post</button>
     </div>
+    {this.state.imgsrc ? <img src={this.state.imgsrc} /> : null }
   </Fragment>
 }
 }
