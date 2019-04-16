@@ -1,10 +1,11 @@
-import React from 'react'
-import Canvas from '../paint/Canvas.js'
+import React, { Fragment } from 'react'
+// import Canvas from '../paint/Canvas.js'
+import Drawings from '../paint/Drawings.js'
 
 const Home = (props) => (
-  <div className='pinkBorder'>
-    <Canvas user={props.user} />
-  </div>
+  <Fragment>
+    <Drawings user={props.user} />
+  </Fragment>
 )
 
 export default Home

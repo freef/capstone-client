@@ -1,12 +1,9 @@
 import React, { Component, Fragment } from 'react'
-import apiConfig from '../apiConfig.js'
-import axios from 'axios'
 
 class Canvas extends Component {
-  constructor () {
-    super()
+  constructor (props) {
+    super(props)
     this.state = {
-      user: null,
       paint: true,
       context: null,
       mouseX: 0.0,
@@ -21,8 +18,7 @@ class Canvas extends Component {
         b: 0,
         g: 0
       },
-      brushSize: 30,
-      imgsrc: null
+      brushSize: 30
     }
   }
 
@@ -68,15 +64,17 @@ redraw =() => {
 }
 
 onStartPaint = (e) => {
-  console.log(e)
-  console.log(e.type)
-  console.log(e.target)
+  // console.log(e)
+  // console.log(e.type)
+  // console.log(e.target)
   this.paint = true
+  // console.log(this.paint)
   this.addClick(e.nativeEvent.offsetX, e.nativeEvent.offsetY)
   this.redraw()
 }
 
 onDraw = (e) => {
+  // console.log(e.nativeEvent)
   if (this.paint) {
     this.addClick(e.nativeEvent.offsetX, e.nativeEvent.offsetY, true)
     this.redraw()
@@ -92,19 +90,6 @@ onMouseExit = (e) => {
   this.paint = false
 }
 
-onSave = (e) => {
-  event.preventDefault()
-  const canvas = document.getElementById('canvasInAPerfectWorld').toDataURL()
-  console.log(canvas)
-  axios.post(`${apiConfig}/uploads`, { data: canvas, contentType: false, processData: false })
-    .then((responseData) => {
-      console.log(responseData)
-      this.setState({ imgsrc: responseData.data.upload.url })
-      return responseData
-    })
-    .catch(console.log)
-}
-
 componentDidMount () {
   this.setState({ context: document.getElementById('canvasInAPerfectWorld').getContext('2d') })
 }
@@ -116,7 +101,6 @@ render () {
     borderRadius: '100%'
   }
   return <Fragment>
-    <p>Draw Below!</p>
     <canvas
       className='blackborder'
       id="canvasInAPerfectWorld"
@@ -135,15 +119,13 @@ render () {
       <div className='coloroptions'>
         <div className="colorpicker" style={ colorpickerstyle }> </div>
         <div className='colorsliders'>
-          <label htmlFor='red'>Red <input name='red' onChange={this.onColorChange} type="range" min="0" max="255" defaultValue="0" className="slider" id="r" /></label>
-          <label htmlFor='green'>Green <input name='green' onChange={this.onColorChange} type="range" min="0" max="255" defaultValue="0" className="slider" id="g" /></label>
-          <label htmlFor='blue'>Blue< input name='blue' onChange={this.onColorChange} type="range" min="0" max="255" defaultValue="0" className="slider" id="b" /></label>
+          <label htmlFor='red'><span className='normalcolor'>Red</span> <input name='red' onChange={this.onColorChange} type="range" min="0" max="255" defaultValue="0" className="slider" id="r" /></label>
+          <label htmlFor='green'><span className='normalcolor'>Green</span> <input name='green' onChange={this.onColorChange} type="range" min="0" max="255" defaultValue="0" className="slider" id="g" /></label>
+          <label htmlFor='blue'><span className='normalcolor'>Blue</span>< input name='blue' onChange={this.onColorChange} type="range" min="0" max="255" defaultValue="0" className="slider" id="b" /></label>
         </div>
       </div>
       <label htmlFor='brush-size'>Brush Size< input name='brush-size' onChange={this.onSizeChange} type="range" min="1" max="100" defaultValue="30" className="slider" id="brushsize" /></label>
-      <button onClick={this.onSave}>Post</button>
     </div>
-    {this.state.imgsrc ? <img src={this.state.imgsrc} /> : null }
   </Fragment>
 }
 }

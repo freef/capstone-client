@@ -9,6 +9,8 @@ import SignIn from './auth/components/SignIn'
 import SignOut from './auth/components/SignOut'
 import ChangePassword from './auth/components/ChangePassword'
 import Home from './views/Home.js'
+import PostCanvas from './paint/PostCanvas.js'
+// import Post from './paint/Post.js'
 
 import Alert from 'react-bootstrap/Alert'
 
@@ -56,7 +58,10 @@ class App extends Component {
           <AuthenticatedRoute user={user} path='/change-password' render={() => (
             <ChangePassword alert={this.alert} user={user} />
           )} />
-          <Route path='/' component={Home} />
+          <AuthenticatedRoute user={user} path='/new' render={() => (
+            <PostCanvas user={user} />
+          )} />
+          <Route exact path='/' render={() => (<Home user={this.state.user} />)} />
         </main>
       </React.Fragment>
     )
