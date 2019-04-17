@@ -1,44 +1,18 @@
-import React, { Component } from 'react'
+import React, { Fragment } from 'react'
+import { Link } from 'react-router-dom'
 
-class Drawing extends Component {
-  constructor (props) {
-    super(props)
-    this.state = {
-      user: this.props.user ? this.props.user._id : null,
-      newComment: false,
-      editable: null
-    }
-  }
+const Drawing = ({ id, user, title, img, likes, username }) => {
+  const p = this.props
+  return (
+    <Fragment>
+      <h2><Link to={{ pathname: `/drawings/${id}`, state: { user: user, id: id } }} id={id} >{title}</Link></h2>
+      <div className='drawingcontainer'>
+        <img className='drawing' id={id} src={img} alt={title} />
+      </div>
+      <p><small>by:</small> {username[0].username}</p>
+      <p>{likes} likes</p>
 
-  // key={drawing.id}
-  // id={drawing.id}
-  // title={drawing.id}
-  // img={drawing.img}
-  // owner={drawing.owner}
-  // likes={drawing.likes}
-  // comments={drawing.comments}
-  // username={drawing.username.username}
-  // score={drawing.score}
-
-  componentDidMount () {
-    this.props.owner === this.state.user ? this.setState({ editable: true }) : this.setState({ editable: false })
-    console.log(this.props)
-  }
-
-  render () {
-    const p = this.props
-    return (
-      <div className='pinkBorder'>
-        <h2>{p.title}</h2>
-        <div className='drawingcontainer'>
-          <img className='drawing' id={p.id} src={p.img} alt={p.title} />
-        </div>
-        <p><small>by:</small> {p.username[0].username}</p>
-        <p>{p.likes} likes</p>
-        {this.state.editable ? <p>editable</p> : null}
-        {this.state.user ? <button>Comment</button> : null }
-      </div>)
-  }
+    </Fragment>)
 }
 
 export default Drawing
