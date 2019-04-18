@@ -26,6 +26,7 @@ class Canvas extends Component {
 
 onEyedropper = (event) => {
   event.preventDefault()
+  console.log('')
   this.setState({ eyedropper: !this.state.eyedropper })
 }
 
