@@ -11,7 +11,8 @@ class SignUp extends Component {
     this.state = {
       email: '',
       password: '',
-      passwordConfirmation: ''
+      passwordConfirmation: '',
+      username: ''
     }
   }
 
@@ -21,23 +22,21 @@ class SignUp extends Component {
 
   onSignUp = event => {
     event.preventDefault()
-
     const { alert, history, setUser } = this.props
-
     signUp(this.state)
       .then(() => signIn(this.state))
       .then(res => setUser(res.data.user))
-      .then(() => alert(messages.signUpSuccess, 'success'))
+      .then(() => alert(messages.signUpSuccess))
       .then(() => history.push('/'))
       .catch(error => {
         console.error(error)
-        this.setState({ email: '', password: '', passwordConfirmation: '' })
-        alert(messages.signUpFailure, 'danger')
+        this.setState({ email: '', password: '', passwordConfirmation: '', username: '' })
+        alert(messages.signUpFailure)
       })
   }
 
   render () {
-    const { email, password, passwordConfirmation } = this.state
+    const { email, password, passwordConfirmation, username } = this.state
 
     return (
       <form className='auth-form' onSubmit={this.onSignUp}>
@@ -68,6 +67,15 @@ class SignUp extends Component {
           value={passwordConfirmation}
           type="password"
           placeholder="Confirm Password"
+          onChange={this.handleChange}
+        />
+        <label htmlFor="username">Username</label>
+        <input
+          required
+          name="username"
+          value={username}
+          type="string"
+          placeholder="Username"
           onChange={this.handleChange}
         />
         <button type="submit">Sign Up</button>
