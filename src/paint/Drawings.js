@@ -23,9 +23,12 @@ class Drawings extends Component {
   }
 
   render () {
+    const sorted = (d) => {
+      return d.sort((a, b) => a.score - b.score)
+    }
     return (
       <Fragment>
-        {this.state.drawings ? this.state.drawings.map(drawing => (
+        {this.state.drawings ? sorted(this.state.drawings).map(drawing => (
           <OneDrawing
             key={drawing.id}
             id={drawing.id}

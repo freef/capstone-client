@@ -26,6 +26,11 @@ class App extends Component {
     }
   }
 
+  onhide = function (event) {
+    const alert = document.getElementsByClassName('pinkmessage')
+    Array.from(alert).forEach((item) => item.classList.add('dnone'))
+  }
+
   setUser = user => this.setState({ user })
 
   clearUser = () => this.setState({ user: null })
@@ -41,7 +46,7 @@ class App extends Component {
       <React.Fragment>
         <Header user={user} />
         {alerts.map((alert, index) => (
-          <Alert className='pinkmessage' key={index} dismissible variant={alert.type}>
+          <Alert onClick={this.onhide} className='pinkmessage' key={index} dismissible variant={alert.type}>
             <Alert.Heading className='pinkmessage'>
               {alert.message}
             </Alert.Heading>

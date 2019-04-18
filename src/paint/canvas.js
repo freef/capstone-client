@@ -19,13 +19,34 @@ class Canvas extends Component {
         g: 0
       },
       brushSize: 30,
-      eyedropper: false
+      eyedropper: false,
+      background: 'rgb(0,0,0,0)'
     }
   }
 
 onEyedropper = (event) => {
   event.preventDefault()
   this.setState({ eyedropper: !this.state.eyedropper })
+}
+
+onSetBg = (event) => {
+  event.preventDefault()
+  const c = this.state.color
+  const color = `rgb(${c.r}, ${c.g}, ${c.b})`
+  this.setState({ background: color }, () => {
+    this.onBg()
+  })
+}
+
+onBg = () => {
+  const canvas = document.getElementById('canvasInAPerfectWorld')
+  const ctx = this.state.context
+  ctx.fillStyle = this.state.background
+  ctx.fillRect(0, 0, canvas.width, canvas.height)
+  if (this.props.drawing) {
+    this.recreate(this.props.drawing.img)
+  }
+  setTimeout(this.redraw, 50)
 }
 
 onColorChange = (event) => this.setState({ color: { ...this.state.color, [event.target.id]: event.target.value } })
@@ -42,7 +63,6 @@ getPixelColor = (event) => {
     const red = document.getElementById('r')
     const green = document.getElementById('g')
     const blue = document.getElementById('b')
-    console.log(red)
     red.value = this.state.color.r
     green.value = this.state.color.g
     blue.value = this.state.color.b
@@ -64,6 +84,7 @@ addClick = (x, y, dragging = false) => {
 
 onUndo = () => {
   event.preventDefault()
+  const context = this.state.context
   const clickX = this.state.clickX
   const clickY = this.state.clickY
   const clickDrag = this.state.clickDrag
@@ -72,7 +93,8 @@ onUndo = () => {
   clickDrag.pop()
   this.state.clickColor.pop()
   this.state.clickSize.pop()
-  this.redraw()
+  context.clearRect(0, 0, context.canvas.width, context.canvas.height)
+  this.onBg()
 }
 
 recreate = (url) => {
@@ -88,7 +110,7 @@ redraw =() => {
   const clickY = this.state.clickY
   const clickDrag = this.state.clickDrag
   const context = this.state.context
-  if (!this.props.drawing) { context.clearRect(0, 0, context.canvas.width, context.canvas.height) }
+  // if (!this.props.drawing) { context.clearRect(0, 0, context.canvas.width, context.canvas.height) }
   const canvas = document.getElementById('canvasInAPerfectWorld')
   const displayWidth = canvas.clientWidth
   const displayHeight = canvas.clientHeight
@@ -185,6 +207,7 @@ render () {
       <div className='additionaltools'>
         <label htmlFor='brush-size'>Brush Size< input name='brush-size' onChange={this.onSizeChange} type="range" min="1" max="100" defaultValue="30" className="slider" id="brushsize" /></label>
         <button className="betn toolbetn" onClick={this.onUndo}>Undo</button>
+        <button className="betn toolbetn" onClick={this.onSetBg}>Set Background Color</button>
         <button className='betn toolbetn' onClick={this.onEyedropper}> {this.state.eyedropper ? 'Brush' : 'Eyedropper'}</button>
       </div>
     </div>
