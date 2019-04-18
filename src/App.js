@@ -10,7 +10,7 @@ import SignOut from './auth/components/SignOut'
 import ChangePassword from './auth/components/ChangePassword'
 import Home from './views/Home.js'
 import PostCanvas from './paint/PostCanvas.js'
-import EditCanvas from './paint/EditCanvas.js'
+import EditDrawing from './paint/EditDrawing.js'
 import OneDrawing from './paint/OneDrawing.js'
 // import Post from './paint/Post.js'
 
@@ -41,8 +41,8 @@ class App extends Component {
       <React.Fragment>
         <Header user={user} />
         {alerts.map((alert, index) => (
-          <Alert key={index} dismissible variant={alert.type}>
-            <Alert.Heading>
+          <Alert className='pinkmessage' key={index} dismissible variant={alert.type}>
+            <Alert.Heading className='pinkmessage'>
               {alert.message}
             </Alert.Heading>
           </Alert>
@@ -60,10 +60,10 @@ class App extends Component {
           <AuthenticatedRoute user={user} path='/change-password' render={() => (
             <ChangePassword alert={this.alert} user={user} />
           )} />
-          <AuthenticatedRoute user={user} path='/new' component={EditCanvas} />
-          <AuthenticatedRoute user={user} path='/drawings/:id/edit' render={() => (
+          <AuthenticatedRoute user={user} path='/new' render={() => (
             <PostCanvas user={user} />
           )} />
+          <AuthenticatedRoute user={user} path='/drawings/:id/edit' component={EditDrawing} />
           <Route exact path='/drawings/:id' component={OneDrawing} />
           <Route exact path='/' render={() => (<Home user={this.state.user} />)} />
         </main>

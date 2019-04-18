@@ -6,7 +6,7 @@ $charcoal: #ccc;
 .flash-success,
 .flash-warning,
 .flash-error {
-  border: 1px solid $charcoal;
+  border: 1px solid deeppink;
   display: block;
   left: 25%;
   padding: 30px;
@@ -15,18 +15,19 @@ $charcoal: #ccc;
   top: 15%;
   width: 50%;
   z-index: 1;
+  color: white
 }
 
 .flash-success {
-  background-color: $success;
+  background-color: pink;
 }
 
 .flash-warning {
-  background-color: $warning;
+  background-color: pink;
 }
 
 .flash-error {
-  background-color: $error;
+  background-color: pink;
 }
 
 .auth-form {

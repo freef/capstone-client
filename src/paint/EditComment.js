@@ -19,7 +19,6 @@ class EditDrawing extends Component {
 
   handleSubmit = event => {
     event.preventDefault()
-
     const canvas = document.getElementById('canvasInAPerfectWorld').toDataURL()
     this.setState({ drawing: { ...this.state.drawing, img: canvas } }, () => {
       const config = {
@@ -28,9 +27,7 @@ class EditDrawing extends Component {
         }
       }
       axios.patch(`${apiUrl}/drawings/${this.state.drawing.id}`, { data: this.state.drawing, contentType: false, processData: false }, config)
-        .then(() => {
-          this.setState({ updated: true })
-        })
+        .then(() => this.setState({ edited: true }))
         .catch(() => this.setState({ movie: { ...this.state.movie, title: '', director: '', year: '' }, failed: true }))
     }
     )
@@ -54,7 +51,6 @@ render () {
     <div className='pinkBorder'>
       <form onSubmit={this.handleSubmit}>
         <h2><label htmlFor='title'>Title your image<input defaultValue={this.state.drawing.title} name='title' type='text' onChange={this.onHandleChange} required /></label></h2>
-        <p>The image will load when you click on the canvas</p>
         <Canvas drawing={this.state.drawing} />
         <button className='betn' type='submit'>Submit</button>
       </form>

@@ -3,9 +3,21 @@ body {
   margin: 0;
   padding: 0;
 }
+
 canvas {
-  margin: 0 auto;
+  width: 100%;
+  height: auto;
   text-align: center;
+}
+
+.canvascontainer {
+  width: 80%;
+  margin: 0.5rem auto;
+}
+
+.pinkmessage {
+  background-color: pink;
+  color: white;
 }
 
 .alert {
@@ -40,7 +52,7 @@ canvas {
 
 .drawingcontainer {
   width: 80%;
-  margin: .5rem auto;
+  margin: 0.5rem auto;
 }
 
 .title {
@@ -57,20 +69,21 @@ canvas {
 .navv {
   display: flex;
   justify-content: space-around;
+  background-color: pink;
 }
 
 .navlink {
-  color: pink;
   text-decoration: none;
   margin: 1rem;
   border: 2px solid deeppink;
   border-radius: 2rem;
   padding: 0.5rem 1rem;
+  color: white;
 }
 
 .navlink:hover {
   color: white;
-  background-color: lighten(pink, 5%);
+  background-color: lighten(deeppink, 5%);
   text-decoration: none;
   margin: 1rem;
 }
@@ -78,8 +91,6 @@ canvas {
 .block {
   display: block;
 }
-
-
 
 .error {
   color: red;
@@ -93,10 +104,15 @@ canvas {
   min-width: 80%;
   box-shadow: -1rem 0.5rem pink;
   border-radius: 1rem;
-  display:flex;
+  display: flex;
   flex-direction: column;
-  justify-content:center;
-  text-align:center;
+  justify-content: center;
+  text-align: center;
+}
+
+.additionaltools {
+  display: flex;
+  flex-direction: column;
 }
 
 .main {
@@ -114,10 +130,20 @@ canvas {
   min-width: 40%;
   max-width: 40;
   margin: 0.25rem auto;
+  display: inline;
+}
+
+.toolbetn {
+  width: 100%;
 }
 
 .betn:hover {
   background-color: lighten(pink, 5%);
+}
+
+.drawingattributes {
+  display: flex;
+  justify-content: space-between;
 }
 
 .active-route {
@@ -148,8 +174,7 @@ canvas {
 }
 
 .tools {
-  margin: 1rem .5rem;
+  margin: 1rem 0.5rem;
   display: flex;
   justify-content: center;
-
 }

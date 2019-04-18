@@ -18,13 +18,36 @@ class Canvas extends Component {
         b: 0,
         g: 0
       },
-      brushSize: 30
+      brushSize: 30,
+      eyedropper: false
     }
   }
+
+onEyedropper = (event) => {
+  event.preventDefault()
+  this.setState({ eyedropper: !this.state.eyedropper })
+}
 
 onColorChange = (event) => this.setState({ color: { ...this.state.color, [event.target.id]: event.target.value } })
 
 onSizeChange = (event) => this.setState({ brushSize: event.target.value })
+
+getPixelColor = (event) => {
+  const context = this.state.context
+  const currentTargetRect = event.target.getBoundingClientRect()
+  const eventOffsetX = event.clientX - currentTargetRect.left
+  const eventOffsetY = event.clientY - currentTargetRect.top
+  const pxData = context.getImageData(eventOffsetX, eventOffsetY, 1, 1)
+  this.setState({ color: { r: pxData.data[0], g: pxData.data[1], b: pxData.data[2] } }, () => {
+    const red = document.getElementById('r')
+    const green = document.getElementById('g')
+    const blue = document.getElementById('b')
+    console.log(red)
+    red.value = this.state.color.r
+    green.value = this.state.color.g
+    blue.value = this.state.color.b
+  })
+}
 
 addClick = (x, y, dragging = false) => {
   const curColor = `rgba(${this.state.color.r},${this.state.color.g},${this.state.color.b})`
@@ -39,12 +62,42 @@ addClick = (x, y, dragging = false) => {
   this.state.clickSize.push(curSize)
 }
 
+onUndo = () => {
+  event.preventDefault()
+  const clickX = this.state.clickX
+  const clickY = this.state.clickY
+  const clickDrag = this.state.clickDrag
+  clickX.pop()
+  clickY.pop()
+  clickDrag.pop()
+  this.state.clickColor.pop()
+  this.state.clickSize.pop()
+  this.redraw()
+}
+
+recreate = (url) => {
+  const canvas = document.getElementById('canvasInAPerfectWorld').getContext('2d')
+  const img = new Image()
+  img.crossOrigin = 'anonymous'
+  img.src = url
+  img.onload = () => canvas.drawImage(img, 0, 0)
+}
+
 redraw =() => {
   const clickX = this.state.clickX
   const clickY = this.state.clickY
   const clickDrag = this.state.clickDrag
   const context = this.state.context
-  context.clearRect(0, 0, context.canvas.width, context.canvas.height) // Clears the canvas
+  if (!this.props.drawing) { context.clearRect(0, 0, context.canvas.width, context.canvas.height) }
+  const canvas = document.getElementById('canvasInAPerfectWorld')
+  const displayWidth = canvas.clientWidth
+  const displayHeight = canvas.clientHeight
+  if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
+    canvas.width = displayWidth
+    canvas.height = displayHeight
+    if (this.props.drawing) { this.recreate(this.props.drawing.img) }
+  }
+
   context.lineJoin = 'round'
   context.lineWidth = 5
 
@@ -64,25 +117,30 @@ redraw =() => {
 }
 
 onStartPaint = (e) => {
-  // console.log(e)
-  // console.log(e.type)
-  // console.log(e.target)
+  if (this.state.eyedropper) {
+    this.getPixelColor(e)
+    return
+  }
   this.paint = true
-  // console.log(this.paint)
-  this.addClick(e.nativeEvent.offsetX, e.nativeEvent.offsetY)
+  const currentTargetRect = event.target.getBoundingClientRect()
+  const eventOffsetX = event.clientX - currentTargetRect.left
+  const eventOffsetY = event.clientY - currentTargetRect.top
+  this.addClick(eventOffsetX, eventOffsetY)
   this.redraw()
 }
 
 onDraw = (e) => {
-  // console.log(e.nativeEvent)
+  const currentTargetRect = event.target.getBoundingClientRect()
+  const eventOffsetX = event.clientX - currentTargetRect.left
+  const eventOffsetY = event.clientY - currentTargetRect.top
   if (this.paint) {
-    this.addClick(e.nativeEvent.offsetX, e.nativeEvent.offsetY, true)
+    this.addClick(eventOffsetX, eventOffsetY, true)
+    // this.addClick(e.nativeEvent.x - this.state.context.canvas.offsetLeft, e.nativeEvent.y - this.state.context.canvas.offsetTop, true)
     this.redraw()
   }
 }
 
 onStopPaint = (e) => {
-  // console.log(e.type)
   this.paint = false
 }
 
@@ -91,7 +149,7 @@ onMouseExit = (e) => {
 }
 
 componentDidMount () {
-  this.setState({ context: document.getElementById('canvasInAPerfectWorld').getContext('2d') })
+  this.setState({ context: document.getElementById('canvasInAPerfectWorld').getContext('2d') }, () => this.props.drawing ? this.recreate(this.props.drawing.img) : null)
 }
 render () {
   const colorpickerstyle = {
@@ -101,20 +159,20 @@ render () {
     borderRadius: '100%'
   }
   return <Fragment>
-    <canvas
-      className='blackborder'
-      id="canvasInAPerfectWorld"
-      width="700"
-      height="650"
-      onMouseDown={this.onStartPaint}
-      onMouseMove={this.onDraw.bind(this)}
-      onMouseUp={this.onStopPaint}
-      onMouseLeave={this.onMouseExit}
-      onTouchMove={this.onDraw.bind(this)}
-      onTouchStart={this.onStartPaint}
-      onTouchEnd={this.onStopPaint}
-      onTouchCancel={this.onStopPaint}>
-    </canvas>
+    <div className='canvascontainer'>
+      <canvas
+        className='blackborder'
+        id="canvasInAPerfectWorld"
+        onMouseDown={this.onStartPaint}
+        onMouseMove={this.onDraw.bind(this)}
+        onMouseUp={this.onStopPaint}
+        onMouseLeave={this.onMouseExit}
+        onTouchMove={this.onDraw.bind(this)}
+        onTouchStart={this.onStartPaint}
+        onTouchEnd={this.onStopPaint}
+        onTouchCancel={this.onStopPaint}>
+      </canvas>
+    </div>
     <div className='tools'>
       <div className='coloroptions'>
         <div className="colorpicker" style={ colorpickerstyle }> </div>
@@ -124,7 +182,11 @@ render () {
           <label htmlFor='blue'><span className='normalcolor'>Blue</span>< input name='blue' onChange={this.onColorChange} type="range" min="0" max="255" defaultValue="0" className="slider" id="b" /></label>
         </div>
       </div>
-      <label htmlFor='brush-size'>Brush Size< input name='brush-size' onChange={this.onSizeChange} type="range" min="1" max="100" defaultValue="30" className="slider" id="brushsize" /></label>
+      <div className='additionaltools'>
+        <label htmlFor='brush-size'>Brush Size< input name='brush-size' onChange={this.onSizeChange} type="range" min="1" max="100" defaultValue="30" className="slider" id="brushsize" /></label>
+        <button className="betn toolbetn" onClick={this.onUndo}>Undo</button>
+        <button className='betn toolbetn' onClick={this.onEyedropper}> {this.state.eyedropper ? 'Brush' : 'Eyedropper'}</button>
+      </div>
     </div>
   </Fragment>
 }
