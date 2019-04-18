@@ -100,6 +100,17 @@ canvas {
   margin: 1rem;
 }
 
+.drawlink {
+  text-decoration: none;
+  margin: .5rem;
+  color: #282828;
+}
+
+.drawlink:hover {
+  color:deeppink;
+  text-decoration:none;
+}
+
 .block {
   display: block;
 }
