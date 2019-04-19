@@ -1,119 +1,354 @@
-[![General Assembly Logo](https://camo.githubusercontent.com/1a91b05b8f4d44b5bbfb83abac2b0996d8e26c92/687474703a2f2f692e696d6775722e636f6d2f6b6538555354712e706e67)](https://generalassemb.ly/education/web-development-immersive)
+# Splattr
+![Splatter](https://i.imgur.com/D9n1rGm.png)
+Hi all and welcome to the GitHub Repo for Splattr.
+Splattr is a social media platform for sharing digital drawings.
+The idea is that this platfor can allow people to communicate and express themselves differently than they can on traditional social media platforms.
 
-# react-auth-template
+The front end repository for this project is located at https://github.com/freef/capstone-client.
+The back end is located at https://github.com/freef/capstone-api.
+The deployed site is at https://freef.github.io/capstone-client/#/.
+The deployed back-end is hosted at https://agile-tor-41397.herokuapp.com/.
 
-A front-end framework template for starting projects with a recent version of
-either the [Rails API Template](https://git.generalassemb.ly/ga-wdi-boston/rails-api-template)
-or the [Express API Template](https://git.generalassemb.ly/ga-wdi-boston/express-api-template).
+## Description
+Very very briefly Google Hangouts added a small pencil icon to their chat program. The button opened up a small doodle pad and it provided hours of entertainment for myself and those I regularly chat with. Like many Google features, it mysteriously vanished. I miss it, and to recreate it I decided to start a new social media platform where people can chat using MS Paint like doodles. I'm hoping that this little forum will grow to be both silly and charming.
 
-## Installation
+## Technology
+### Front End
+- [HTML 5](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference)
+- [CSS](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference)
+- [JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference)
+- [ReactJS](https://reactjs.org/)
+- [React Router](https://github.com/ReactTraining/react-router)
 
-1. [Download](../../archive/master.zip) this template.
-1. Unzip and rename the template directory (`unzip ~/Downloads/react-auth-template-master.zip`).
-1. Move into the new project and `git init`.
-1. Empty [`README.md`](README.md) and fill with your own content.
-1. Replace `ga-wdi-boston.react-auth-template` in `package.json` with your
-   projects name.
-1. Replace the `"homepage"` field in `package.json` with your (public) Github
-   account name and repository name.
-1. Install dependencies with `npm install`.
-1. `git add` and `git commit` your changes.
-1. Run the development server with `npm start`.
+### Back End
+- [MongoDB](https://www.mongodb.com/)
+- [Mongoose](https://mongoosejs.com/)
+- [ExpressJS](https://expressjs.com/)
 
-## Deployment
+## How it works
+The front end mostly consists of an HTML Canvas & a component that retreives images from an AWS S3 Bucket.
+The client will call toDatUrl on the HTML canvas and send it to the database on Heroku using Axios.
+The server will send the image to an AWS S3 bucket and store the location.
+the API is a RESTful API built MongoDB and ExpressJS. It queries the database and returns a JSON.
+JavaScript parses the JSON and renders pieces of it on the page using ReactJS. That HTML is stylized using CSS and a small amount of React Bootstrap.
+For Patch requests the image redraws the image onto the Canvas. The deployed site is whitelisted to avoid CORS issues.
 
-Before deploying, you first need to make sure the `homepage` key in your
-`package.json` is pointing to the correct value. It should be the url of your
-deployed application.
+## Planning
+Entering this project I was wrestling a lot with Scope. Many of the ideas I had were not achievable in the timeframe of the project. Entering the weekend I discovered the Canvas tag In HTML 5 and decided to try my hand at making a forum where users could communicate only using Images.
 
-To deploy you should first make sure you are on the `master` branch with a
-clean working directory, then you can run `npm run deploy` and wait to see if
-it runs successfully.
+I streamlined my planning for this project, opting for a basic wireframe and using a backend configuration that I was most familiar and comfortable with. Express was selected as making alterations to the data models is a much less involved process than rails.
 
-## About
+React was selected for the front end as I enjoyed the structure of React and wanted more experience using the framework.
 
-This template is derived from GA Boston's [react-template](https://git.generalassemb.ly/ga-wdi-boston/react-template).
-Most of the development dependencies, such as linters, SCSS compiler, Webpack
-config, NPM scripts, etc in this repo come from there.
+In the original 4 days of the project, getting Amazon S3 to work smoothly with my project turned out to be quite a hassle. Editing an image from AWS caused a CORS security error and it took a great deal of time to resolve. Ulimately I had to whitelist my deployed client for users to update images.
 
-It includes all the components and routes needed to sign up, sign in, change
-passwords, and sign out of an API built with either template linked above, with
-no need for modification.
+The event loop also posed a challenge to this project. Redrawing images from AWS to the Canvas during patch requests often took longer than redrawing the newly added lines, resulting in the original drawing being placed over the new lines. This was solved by adding a set timeout to the canvas redraw action when updating images.
 
-**NOTE**: You should customize the included components to suit you app! They're
-provided as a guide and a bare minimum of functionality and style. Consider
-changing the provided SCSS styles, modifying the auth code, improving the flash
-messages, etc.
+## Problem solving
+The following are tips for solving any problems:
+- Check that the problem is a requirment
+- Double check that its actually a requirement
+- Read the error message
+- Check for plurlalization/capitalization
+- Check syntax
+- Check if the code thats giving you trouble works somewhere else
+- Simplify the code/process
+- console log paramaters
+- console log output
+- try running code again
+- Try do do it differently if none of the above worked and you still get the same error message
 
-## Structure
 
-Currently, the top-level `App` component stores the currently authenticated
-user in state, as well as data related to the flash messages. `App` renders the
-`Header` component, and a list of routes, each of which render a component from
-`src/auth/components`. The `auth` directory has two non-component files, `api`
-and `messages`, which contain all the needed `fetch` calls, and messages to
-display when API calls succeed or fail, respectively.
+## Entity Relationship Diagram
+Current ERD
+```
+|users|-|-<|Drawings|
 
-We recommend following this pattern in your app. For instance, if you are making
-an app that keeps track of books, you might want a `books` directory next to
-`auth`, which contains its own `api` and `messages` files, as well as a
-`components` directory.
+Comments coming soon!
+```
 
-## Features
+## Known Issues
+- The Undo button only removes the latest point from the drawing, not the latest action
+- There is no usermanual
+- Performance drops noticably when using a background color
+  - This should be solved by adding a background color to the draw Array rather than invoking it as a canvas fill outside the normal draw cycle.
 
-### `<AuthenticatedRoute />`
+## Wirerames
+![Wireframe](https://i.imgur.com/K4JTFNM.png)
 
-This template contains a handy component for creating routes that require a
-user to be authenticated before visiting. This component lives in
-`src/auth/components/AuthenticatedRoute.js` and is already required in `App`.
-It's a thin wrapper around React Router's `<Route />` component. The only
-difference is that it expects a prop called `user`, and if that prop is falsy,
-it will render a `<Redirect />` that takes the user to `/`. **If you want to use
-it, you must pass it the currently authenticated as a prop!**
+## User stories
+As a user I would like to click on the canvas to create lines to create drawings
+as a user i would like to be able to title my drawing to tell people what it is
+as a user i would like to be able create an account with a username, email and password
+as a user i would like to sign in with a username email and password
+as a user i would like to save my images as a post so others can see them
+as a user i would like to be able to view all posts
+as a user i would like to be able to comment on posts
 
-It supports both the `component=` and `render=` attributes, but like `<Route />`
-it will not forward props to the component if you use `component=`.
+## Potential Future Improvements
+- Meta
+  - find a better way to identify and catalog necessary UX improvements
+- UI Improvements
+  - Fix Navbar in Mobile
+  - Create tile layout for desktop
+  - Create profile page
 
-### Flash Messages
+- Features
+  - View all posts by an author
+  - Add replies
+  - Mke a copy and "deface" another user's drawings
+  - allow for nested replies
+  - add likes on comments
 
-The `App` component has a rudimentary version of flash messages. To use it,
-pass `this.flash` into a subcomponent of `App` as a prop and call it from there.
-It expects two arguments: a message to display, and a message type, which is one
-of `'flash-success'`, `'flash-warning'`, and `'flash-error'` which make the
-message green, yellow, and red, respectively. You must pass one of these types.
-You can add more types by adding more CSS rules in `App.scss`.
+-DB Changes
+  - Allow for nested replies
+  - Allow for likes on comments
 
-In the auth components, flash messages are used in conjunction with the
- `auth/messages` file to select from a list of predefined success/failure
- messages. To undertand how to do this, look at the definition of `flash` in
- `App.js`, the `signUp` method in `auth/components/SignUp.js`, and the
- `auth/messages.js` file.
+## Set Up and Contributing
 
- To change the duration of the message, replace `2000` with a value of your
- choice (in milliseconds) in the `flash` method definition in `App.js`.
+All are welcome to contribute to this project.
+Please look at the list of future improvements for places to get started. Performance optimization for the canvas and new canvas tools are high priority.
+To get started:
 
- ### `src/apiConfig.js`
+### Front End
+- Fork this repository
+- Clone to a local folder.
+- NPM Install
+- Run npm start to run local server.
 
- Just like in
-[browser-template](https://git.generalassemb.ly/ga-wdi-boston/browser-template),
-this file will determine whether you're in a production or development
-environment and choose an API URL accordingly. Don't forget to replace the
-`production` URL with your deployed API's URL.
+### Back End
+- Fork the back end repository
+- Clone to local folder
+- NPM install
+- NPM Run Server to run local server
 
-## Tasks
+Documenataion for libraries and languages is available up above.
 
-Developers should run these often!
+## API
 
-- `npm run nag`: runs code quality analysis tools on your code and complains.
-- `npm run make-standard`: reformats all your code in the JavaScript Standard
-  Style.
-- `npm run start`: generates bundles, watches, and livereloads.
-- `npm run build`: place bundled styles and scripts where `index.html` can find
-    them
-- `npm run deploy`: builds and deploys master branch
+Scripts are included in [`curl-scripts`](curl-scripts) to test built-in actions. Add your
+own scripts to test your custom API. As an alternative, you can write automated
+tests in RSpec to test your API.
 
-## [License](LICENSE)
+### Authentication
 
-1. All content is licensed under a CC­BY­NC­SA 4.0 license.
-1. All software code is licensed under GNU GPLv3. For commercial use or
-    alternative licensing, please contact legal@ga.co.
+| Verb   | URI Pattern            | Controller#Action             |
+|--------|------------------------|-------------------------------|
+| POST   | `/sign-up`             | `users.post/sign-up`          |
+| POST   | `/sign-in`             | `users.post/sign-in`          |
+| PATCH  | `/change-password`     | `users.patch/change-password` |
+| DELETE | `/sign-out`            | `users.delete/sign-out`       |
+
+#### POST /sign-up
+
+Request:
+
+```sh
+curl https://mdhs--backend.herokuapp.com/sign-up \
+  --include \
+  --request POST \
+  --header "Content-Type: application/json" \
+  --data '{
+    "credentials": {
+      "email": "'"${EMAIL}"'",
+      "handle": "'"${HANDLE}"'",
+      "password": "'"${PASSWORD}"'",
+      "password_confirmation": "'"${PASSWORD}"'"
+    }
+  }'
+```
+
+```sh
+EMAIL=ava@bob.com PASSWORD=hannah curl-scripts/auth/sign-up.sh
+```
+
+Response:
+
+```md
+HTTP/1.1 201 Created
+Content-Type: application/json; charset=utf-8
+
+{
+  "user": {
+    "id": 1,
+    "email": "ava@bob.com"
+  }
+}
+```
+
+#### POST /sign-in
+
+Request:
+
+```sh
+curl https://mdhs--backend.herokuapp.com/sign-in \
+  --include \
+  --request POST \
+  --header "Content-Type: application/json" \
+  --data '{
+    "credentials": {
+      "email": "'"${EMAIL}"'",
+      "password": "'"${PASSWORD}"'"
+    }
+  }'
+```
+
+```sh
+EMAIL=ava@bob.com PASSWORD=hannah curl-scripts/auth/sign-in.sh
+```
+
+Response:
+
+```md
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+
+{
+  "user": {
+    "id": 1,
+    "email": "ava@bob.com",
+    "token": "BAhJIiVlZDIwZTMzMzQzODg5NTBmYjZlNjRlZDZlNzYxYzU2ZAY6BkVG--7e7f77f974edcf5e4887b56918f34cd9fe293b9f"
+  }
+}
+```
+
+#### PATCH /change-password
+
+Request:
+
+```sh
+curl --include --request PATCH "https://agile-tor-41397.herokuapp.com/change-password" \
+  --header "Authorization: Token token=$TOKEN" \
+  --header "Content-Type: application/json" \
+  --data '{
+    "passwords": {
+      "old": "'"${OLDPW}"'",
+      "new": "'"${NEWPW}"'"
+    }
+  }'
+```
+
+```sh
+OLDPW='hannah' NEWPW='elle' TOKEN='BAhJIiVlZDIwZTMzMzQzODg5NTBmYjZlNjRlZDZlNzYxYzU2ZAY6BkVG--7e7f77f974edcf5e4887b56918f34cd9fe293b9f' sh curl-scripts/auth/change-password.sh
+```
+
+Response:
+
+```md
+HTTP/1.1 204 No Content
+```
+
+#### DELETE /sign-out
+
+Request:
+
+```sh
+curl https://agile-tor-41397.herokuapp.com/sign-out \
+  --include \
+  --request DELETE \
+  --header "Authorization: Token token=$TOKEN"
+```
+
+```sh
+TOKEN='BAhJIiVlZDIwZTMzMzQzODg5NTBmYjZlNjRlZDZlNzYxYzU2ZAY6BkVG--7e7f77f974edcf5e4887b56918f34cd9fe293b9f' sh curl-scripts/auth/sign-out.sh
+```
+
+Response:
+
+```md
+HTTP/1.1 204 No Content
+```
+
+
+### Drawings
+| Verb    | URI Pattern           | Route Action      |
+|---------|-----------------------|-------------------|
+| POST    | `/drawings`              | `create`          |
+| GET     | `/drawings`              | `drawings#index`     |
+| GET     | `/drawings/:id`          | `drawings#show`      |
+| PATCH   | `/drawings/:id`          | `drawings#update`    |
+| DELETE  | `/drawings/:id`          | `drawings#destroy`   |
+| PATCH   | `/likes/:id`          | `drawings#update`    |
+#### POST /drawings
+Request:
+
+```sh
+curl "https://agile-tor-41397.herokuapp.com/drawings" \
+  --include \
+  --request POST \
+  --header "Authorization: Token token=${TOKEN}" \
+  --header "Content-Type: application/json" \
+  --data '{
+    "draw": {
+      "title": "'"${TITLE}"'",
+      "img": "'"${BODY}"'"
+    }
+  }'
+```
+
+#### GET /drawings
+Request:
+```sh
+curl "https://agile-tor-41397.herokuapp.com/drawings" \
+  --include \
+  --request GET \
+  ```
+
+#### GET /my-drawings
+Request:
+```sh
+curl "https://agile-tor-41397.herokuapp.com/my-drawings" \
+  --include \
+  --request GET \
+  --header "Authorization: Token token=${TOKEN}"
+  ```
+Response:
+#### GET /drawings/:id
+Request:
+```sh
+curl "https://agile-tor-41397.herokuapp.com/drawings/${ID}" \
+  --include \
+  --request GET \
+  ```
+
+#### PATCH /drawings/:id
+Request:
+```sh
+curl "https://agile-tor-41397.herokuapp.com/drawings/${ID}" \
+  --include \
+  --header "Authorization: Token token=${TOKEN}" \
+  --request PATCH \
+  --header "Content-Type: application/json" \
+  --data '{
+    "draw": {
+      "title": "'"${TITLE}"'",
+      "img": "'"${BODY}"'"
+    }
+  }'
+```
+
+#### DELETE  /drawings/:id
+Request:
+```sh
+curl "https://agile-tor-41397.herokuapp.com/drawings/${ID}" \
+  --include \
+  --header "Authorization: Token token=${TOKEN}" \
+  --request DELETE \
+```
+
+#### PATCH  /likes/:id
+Request:
+```sh
+curl "https://agile-tor-41397.herokuapp.com/drawings/${ID}" \
+  --include \
+  --request PATCH \
+  --header "Content-Type: application/json" \
+  --header "Authorization: Bearer ${TOKEN}" \
+--data '{
+    "draw": {
+      "id": "'"${LIKES}"'"
+    }
+  }'
+```
+
+-- Freef
