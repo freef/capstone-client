@@ -350,5 +350,10 @@ curl "https://agile-tor-41397.herokuapp.com/drawings/${ID}" \
     }
   }'
 ```
+## Acknowledgements
+A particular thank you to the following blog posts:
+- http://www.williammalone.com/articles/create-html5-canvas-javascript-drawing-app/ was incredibly helpful in learning to create a working paint application.
+- https://h3manth.com/content/convert-any-image-html5-canvas was incredibly helpful in geting update to work.
+
 
 -- Freef
