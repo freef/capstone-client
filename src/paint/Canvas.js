@@ -20,7 +20,7 @@ class Canvas extends Component {
       },
       brushSize: 30,
       eyedropper: false,
-      background: 'rgb(0,0,0,0)'
+      background: 'rgba(0,0,0,0)'
     }
   }
 
@@ -70,7 +70,7 @@ getPixelColor = (event) => {
 }
 
 addClick = (x, y, dragging = false) => {
-  const curColor = `rgba(${this.state.color.r},${this.state.color.g},${this.state.color.b})`
+  const curColor = `rgb(${this.state.color.r},${this.state.color.g},${this.state.color.b})`
   const curSize = this.state.brushSize
   const clickX = this.state.clickX
   const clickY = this.state.clickY
@@ -110,7 +110,7 @@ redraw =() => {
   const clickY = this.state.clickY
   const clickDrag = this.state.clickDrag
   const context = this.state.context
-  // if (!this.props.drawing) { context.clearRect(0, 0, context.canvas.width, context.canvas.height) }
+  // if (!this.props.drawing) { context.clearRect(0, 0, context.canvas.width, context.canvas.height) } // THIS IS THE LINE TO COMMENT OUT
   const canvas = document.getElementById('canvasInAPerfectWorld')
   const displayWidth = canvas.clientWidth
   const displayHeight = canvas.clientHeight

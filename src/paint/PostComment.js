@@ -8,29 +8,31 @@ class PostCanvas extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      draw: {
+      comment: {
         title: null,
-        owner: this.props.user ? this.props.user._id : null,
+        owner: this.props.location.state ? this.props.location.state.user._id : null,
         img: null,
-        id: null
+        id: null,
+        drawing: this.props.location.state ? this.props.location.state.drawing.id : null
       },
       created: false,
-      user: this.props.user || null
+      user: this.props.location.state.user || null
     }
   }
-  onHandleChange = event => this.setState({ draw: { ...this.state.draw, [event.target.name]: event.target.value } })
+  onHandleChange = event => this.setState({ comment: { ...this.state.comment, [event.target.name]: event.target.value } })
 
   onSave = (e) => {
+    console.log(this.state.comment.drawing)
     event.preventDefault()
     const canvas = document.getElementById('canvasInAPerfectWorld').toDataURL()
-    this.setState({ draw: { ...this.state.draw, owner: this.props.user.id, img: canvas }, user: this.props.user }, () => {
+    this.setState({ comment: { ...this.state.comment, owner: this.props.location.state.user.id, img: canvas }, user: this.props.location.state.user }, () => {
       const config = {
         headers: {
           Authorization: `Token token=${this.state.user.token}`
         }
       }
-      axios.post(`${apiConfig}/drawings`, { data: this.state.draw, contentType: false, processData: false }, config)
-        .then((responseData) => this.setState({ draw: { id: responseData.data.draw.id } }))
+      axios.post(`${apiConfig}/comments`, { data: this.state.comment, contentType: false, processData: false }, config)
+        .then((responseData) => this.setState({ comment: { id: responseData.data.comment.id } }))
         .then(() => this.setState({ created: true }))
         .catch(console.log)
     })
@@ -44,7 +46,7 @@ class PostCanvas extends Component {
           <Canvas />
           <button className='betn' type='submit'>Submit</button>
         </form>
-        {this.state.created ? <Redirect to={{ pathname: '/drawings/' + this.state.draw.id, state: { user: this.state.user } }} id={this.state.draw.id} /> : null}
+        {this.state.created ? <Redirect to={{ pathname: `/drawings/${this.props.location.state.drawing.id}`, state: { user: this.state.user } }} id={this.state.comment.drawing} /> : null}
       </div>
     )
   }

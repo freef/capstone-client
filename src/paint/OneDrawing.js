@@ -4,6 +4,7 @@ import apiUrl from '../apiConfig.js'
 import Drawing from './Drawing.js'
 import Spinner from 'react-bootstrap/Spinner'
 import { Redirect } from 'react-router-dom'
+import OneComment from './OneComment.js'
 
 class OneDrawing extends Component {
   constructor (props) {
@@ -15,7 +16,9 @@ class OneDrawing extends Component {
       id: this.props.id,
       edit: false,
       likes: [],
-      liked: false
+      liked: false,
+      comment: false,
+      showComments: false
     }
   }
 
@@ -43,6 +46,10 @@ handleLike = () => {
     .then(() => this.setState({ created: true }))
     .catch(console.log)
 }
+
+toggleComments =() => this.setState({ showComments: !this.state.showComments })
+
+handleComment = () => this.setState({ comment: true })
 
 componentDidMount () {
   if (this.props.match) {
@@ -85,10 +92,30 @@ render () {
         <p>{this.state.drawing ? this.state.drawing.likes.length : 0} {this.state.drawing ? (this.state.drawing.likes.length === 1 ? 'like' : 'likes') : 'likes'}</p>
         <p><small>by:</small> {this.state.drawing ? this.state.drawing.username[0].username : 'Anonymous'}</p>
       </div>
-      {this.state.user ? <button className='betn'onClick={this.handleLike}>{this.state.drawing.likes ? this.state.drawing.likes.some((item) => item.toString() === this.state.user._id) ? 'Unlike' : 'Like' : 'like' }</button> : null}
+      <div className='betn-wrapper'>
+        {this.state.user ? <button className='betn'onClick={this.handleLike}>{this.state.drawing.likes ? this.state.drawing.likes.some((item) => item.toString() === this.state.user._id) ? 'Unlike' : 'Like' : 'like' }</button> : null}
 
-      {this.state.user ? (this.state.user._id === this.state.drawing.owner ? <button className='betn' onClick={this.handleEdit} >Edit</button> : null) : null }
-      {this.state.edit ? <Redirect to={{ pathname: '/drawings/' + this.state.drawing.id + '/edit', state: { user: this.state.user, drawing: this.state.drawing } }} id={this.state.drawing.id} /> : null}
+        {this.state.user ? (this.state.user._id === this.state.drawing.owner ? <button className='betn' onClick={this.handleEdit} >Edit</button> : null) : null }
+        {this.state.edit ? <Redirect to={{ pathname: '/drawings/' + this.state.drawing.id + '/edit', state: { user: this.state.user, drawing: this.state.drawing } }} id={this.state.drawing.id} /> : null}
+        {this.state.drawing ? (this.state.drawing.comments.length > 0 ? <button className="betn" onClick={this.toggleComments}> {this.state.showComments ? 'Hide Comments' : 'Show Comments'}</button> : null) : null}
+        {this.state.user ? <button className ='betn' onClick={this.handleComment} >Comment</button> : null}
+      </div>
+      {this.state.comment ? <Redirect to={{ pathname: '/comment/', state: { user: this.state.user, drawing: this.state.drawing } }} id={this.state.drawing.id} /> : null}
+      {this.state.showComments ? this.state.drawing.comments.map(drawing => (
+        <OneComment
+          key={drawing.id}
+          id={drawing.id}
+          title={drawing.title}
+          img={drawing.img}
+          owner={drawing.owner} // this is an id
+          likes={drawing.likes}
+          comments={drawing.comments}
+          username={drawing.username}
+          score={drawing.score}
+          imagekey={drawing.imagekey}
+          user={this.props.user}
+        />
+      )) : null}
     </div>)
 }
 }

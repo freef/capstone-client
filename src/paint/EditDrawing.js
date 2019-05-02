@@ -44,7 +44,7 @@ onDelete = () => {
       Authorization: `Token token=${token}`
     }
   }
-  axios.delete(apiUrl + '/drawings/' + id, config)
+  axios.delete(apiUrl + '/comments/' + id, config)
     .then((response) => this.setState({ deleted: true }))
     .catch((res) => console.log(res))
 }

@@ -26,7 +26,9 @@ const alwaysOptions = (
 
 const Header = ({ user }) => (
   <header className="main-header navv">
-    <h1 className="title">Splattr</h1>
+    <div className='logo'>
+      <h1 className="title">Splattr</h1>
+    </div>
     <nav>
       { user && <span>Welcome, {user.username}</span>}
       { user ? authenticatedOptions : unauthenticatedOptions }

@@ -12,6 +12,7 @@ import Home from './views/Home.js'
 import PostCanvas from './paint/PostCanvas.js'
 import EditDrawing from './paint/EditDrawing.js'
 import OneDrawing from './paint/OneDrawing.js'
+import PostComment from './paint/PostComment.js'
 // import Post from './paint/Post.js'
 
 import Alert from 'react-bootstrap/Alert'
@@ -68,6 +69,7 @@ class App extends Component {
           <AuthenticatedRoute user={user} path='/new' render={() => (
             <PostCanvas user={user} />
           )} />
+          <AuthenticatedRoute user={user} path='/comment' component={PostComment} />
           <AuthenticatedRoute user={user} path='/drawings/:id/edit' component={EditDrawing} />
           <Route exact path='/drawings/:id' component={OneDrawing} />
           <Route exact path='/' render={() => (<Home user={this.state.user} />)} />
