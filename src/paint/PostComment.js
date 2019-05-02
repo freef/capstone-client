@@ -22,7 +22,6 @@ class PostCanvas extends Component {
   onHandleChange = event => this.setState({ comment: { ...this.state.comment, [event.target.name]: event.target.value } })
 
   onSave = (e) => {
-    console.log(this.state.comment.drawing)
     event.preventDefault()
     const canvas = document.getElementById('canvasInAPerfectWorld').toDataURL()
     this.setState({ comment: { ...this.state.comment, owner: this.props.location.state.user.id, img: canvas }, user: this.props.location.state.user }, () => {
