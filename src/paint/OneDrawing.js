@@ -1,10 +1,10 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import axios from 'axios'
 import apiUrl from '../apiConfig.js'
-import Drawing from './Drawing.js'
+// import Drawing from './Drawing.js'
 import Spinner from 'react-bootstrap/Spinner'
-import { Redirect } from 'react-router-dom'
-import OneComment from './OneComment.js'
+import { Redirect, Link } from 'react-router-dom'
+// import OneComment from './OneComment.js'
 
 class OneDrawing extends Component {
   constructor (props) {
@@ -18,11 +18,12 @@ class OneDrawing extends Component {
       likes: [],
       liked: false,
       comment: false,
-      showComments: false
+      showComments: false,
+      isComment: false
     }
   }
 
-  handleEdit = () => this.setState({ edit: true })
+handleEdit = () => this.setState({ edit: true })
 
 handleLike = () => {
   const config = {
@@ -75,21 +76,14 @@ render () {
   return (
     <div className='pinkBorder'>
       {this.state.drawing
-        ? <Drawing
-          key={drawing.id}
-          id={drawing.id}
-          title={drawing.title}
-          img={drawing.img}
-          owner={drawing.owner} // this is an id
-          likes={drawing.likes}
-          comments={drawing.comments}
-          username={drawing.username}
-          score={drawing.score}
-          user={this.state.user}
-          imagekey={drawing.imagekey}
-        /> : <Spinner animation='border' />}
+        ? <Fragment>
+          <h2><Link className="drawlink" to={{ pathname: `/drawings/${drawing.id}`, state: { user: this.state.user, id: drawing.id } }} id={drawing.id} >{drawing.title}</Link></h2>
+          <div className='drawingcontainer'>
+            <img className='drawing' id={ drawing.id + drawing.owner } src={drawing.img} alt={drawing.title} />
+          </div>
+        </Fragment> : <Spinner animation='border' />}
       <div className='drawingattributes'>
-        <p>{this.state.drawing ? this.state.drawing.likes.length : 0} {this.state.drawing ? (this.state.drawing.likes.length === 1 ? 'like' : 'likes') : 'likes'}</p>
+        <p>{this.state.drawing.likes ? this.state.drawing.likes.length : 0} {this.state.drawing ? (this.state.drawing.likes.length === 1 ? 'like' : 'likes') : 'likes'}</p>
         <p><small>by:</small> {this.state.drawing ? this.state.drawing.username[0].username : 'Anonymous'}</p>
       </div>
       <div className='betn-wrapper'>
@@ -100,20 +94,21 @@ render () {
         {this.state.drawing ? (this.state.drawing.comments.length > 0 ? <button className="betn" onClick={this.toggleComments}> {this.state.showComments ? 'Hide Comments' : 'Show Comments'}</button> : null) : null}
         {this.state.user ? <button className ='betn' onClick={this.handleComment} >Comment</button> : null}
       </div>
-      {this.state.comment ? <Redirect to={{ pathname: '/comment/', state: { user: this.state.user, drawing: this.state.drawing } }} id={this.state.drawing.id} /> : null}
+      {this.state.comment ? <Redirect to={{ pathname: '/new/', state: { user: this.state.user, drawing: this.state.id, isComment: true } }} id={this.state.drawing.id} /> : null}
       {this.state.showComments ? this.state.drawing.comments.map(drawing => (
-        <OneComment
+        <OneDrawing
           key={drawing.id}
           id={drawing.id}
           title={drawing.title}
           img={drawing.img}
           owner={drawing.owner} // this is an id
-          likes={drawing.likes}
-          comments={drawing.comments}
+          likes={false}
+          comments={false}
           username={drawing.username}
           score={drawing.score}
           imagekey={drawing.imagekey}
           user={this.props.user}
+          isComment={true}
         />
       )) : null}
     </div>)

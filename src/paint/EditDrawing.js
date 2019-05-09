@@ -11,7 +11,8 @@ class EditDrawing extends Component {
       user: this.props.location.state.user,
       drawing: this.props.location.state.drawing,
       deleted: false,
-      updated: false
+      updated: false,
+      comment: this.props.location.state.comment
     }
   }
 

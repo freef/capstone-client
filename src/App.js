@@ -66,9 +66,7 @@ class App extends Component {
           <AuthenticatedRoute user={user} path='/change-password' render={() => (
             <ChangePassword alert={this.alert} user={user} />
           )} />
-          <AuthenticatedRoute user={user} path='/new' render={() => (
-            <PostCanvas user={user} />
-          )} />
+          <AuthenticatedRoute user={user} path='/new' component={PostCanvas} />
           <AuthenticatedRoute user={user} path='/comment' component={PostComment} />
           <AuthenticatedRoute user={user} path='/drawings/:id/edit' component={EditDrawing} />
           <Route exact path='/drawings/:id' component={OneDrawing} />
