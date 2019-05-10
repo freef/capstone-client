@@ -10,12 +10,14 @@ class PostCanvas extends Component {
     this.state = {
       draw: {
         title: null,
-        owner: this.props.user ? this.props.user._id : null,
+        owner: this.props.location.state.user ? this.props.location.state.user._id : null,
         img: null,
         id: null
       },
       created: false,
-      user: this.props.user || null
+      isComment: this.props.location.state.isComment,
+      user: this.props.location.state.user,
+      comment: {}
     }
   }
   onHandleChange = event => this.setState({ draw: { ...this.state.draw, [event.target.name]: event.target.value } })
@@ -23,16 +25,27 @@ class PostCanvas extends Component {
   onSave = (e) => {
     event.preventDefault()
     const canvas = document.getElementById('canvasInAPerfectWorld').toDataURL()
-    this.setState({ draw: { ...this.state.draw, owner: this.props.user.id, img: canvas }, user: this.props.user }, () => {
+    this.setState({ draw: { ...this.state.draw, owner: this.props.location.state.user._id, img: canvas }, user: this.props.location.state.user }, () => {
+      console.log(this.state)
+      console.log(this.props.location.state)
       const config = {
         headers: {
           Authorization: `Token token=${this.state.user.token}`
         }
       }
-      axios.post(`${apiConfig}/drawings`, { data: this.state.draw, contentType: false, processData: false }, config)
-        .then((responseData) => this.setState({ draw: { id: responseData.data.draw.id } }))
-        .then(() => this.setState({ created: true }))
-        .catch(console.log)
+      if (!this.state.isComment) {
+        axios.post(`${apiConfig}/drawings`, { data: this.state.draw, contentType: false, processData: false }, config)
+          .then((responseData) => this.setState({ draw: { id: responseData.data.draw.id } }))
+          .then(() => this.setState({ created: true }))
+          .catch(console.log)
+      } else {
+        this.setState({ comment: { ...this.state.draw, drawing: this.props.location.state.drawing }, draw: { id: this.props.location.state.drawing } }, () => {
+          axios.post(`${apiConfig}/comments`, { data: this.state.comment, contentType: false, processData: false }, config)
+            .then((responseData) => this.setState({ comment: { id: responseData.data.comment.id } }))
+            .then(() => this.setState({ created: true }))
+            .catch(console.log)
+        })
+      }
     })
   }
 

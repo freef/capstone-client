@@ -11,7 +11,8 @@ class EditDrawing extends Component {
       user: this.props.location.state.user,
       drawing: this.props.location.state.drawing,
       deleted: false,
-      updated: false
+      updated: false,
+      comment: this.props.location.state.comment
     }
   }
 
@@ -27,7 +28,8 @@ class EditDrawing extends Component {
           Authorization: `Token token=${this.state.user.token}`
         }
       }
-      axios.patch(`${apiUrl}/drawings/${this.state.drawing.id}`, { data: this.state.drawing, contentType: false, processData: false }, config)
+      console.log(this.state)
+      axios.patch(`${apiUrl}${this.state.drawing.isComment ? '/comments/' : '/drawings/'}${this.state.drawing.id}`, { data: this.state.drawing, contentType: false, processData: false }, config)
         .then(() => {
           this.setState({ updated: true })
         })
@@ -58,7 +60,7 @@ render () {
         <Canvas drawing={this.state.drawing} />
         <button className='betn' type='submit'>Submit</button>
       </form>
-      {this.state.updated ? <Redirect to={{ pathname: '/drawings/' + this.state.drawing.id, state: { user: this.state.user } }} id={this.state.drawing.id} /> : null}
+      {this.state.updated ? <Redirect to={{ pathname: '/drawings/' + (this.state.drawing.isComment ? this.state.drawing.drawing : this.state.drawing.id), state: { user: this.state.user } }} id={this.state.drawing.id} /> : null}
       <button className='betn' onClick={this.onDelete}>Delete</button>
       {this.state.deleted ? <Redirect to={{ pathname: '/', state: { user: this.state.user } }} /> : null}
     </div>)
