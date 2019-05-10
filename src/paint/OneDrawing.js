@@ -31,7 +31,7 @@ handleLike = () => {
       Authorization: `Token token=${this.state.user.token}`
     }
   }
-  axios.patch(`${apiUrl}/likes/${this.state.id}`, { draw: this.state.drawing, user: this.state.user }, config)
+  axios.patch(`${apiUrl}${(this.props.isComment ? '/likescomment/' : '/likes/')}${this.state.id}`, { draw: this.state.drawing, user: this.state.user }, config)
     .then((responseData) => {
       const likes = [...this.state.drawing.likes]
       const l = this.state.drawing.likes
@@ -92,7 +92,7 @@ render () {
         {this.state.user ? (this.state.user._id === this.state.drawing.owner ? <button className='betn' onClick={this.handleEdit} >Edit</button> : null) : null }
         {this.state.edit ? <Redirect to={{ pathname: '/drawings/' + this.state.drawing.id + '/edit', state: { user: this.state.user, drawing: this.state.drawing } }} id={this.state.drawing.id} /> : null}
         {this.state.drawing ? (this.state.drawing.comments.length > 0 ? <button className="betn" onClick={this.toggleComments}> {this.state.showComments ? 'Hide Comments' : 'Show Comments'}</button> : null) : null}
-        {this.state.user ? <button className ='betn' onClick={this.handleComment} >Comment</button> : null}
+        {this.state.user ? this.props.isComment ? null : <button className ='betn' onClick={this.handleComment} >Comment</button> : null}
       </div>
       {this.state.comment ? <Redirect to={{ pathname: '/new/', state: { user: this.state.user, drawing: this.state.id, isComment: true } }} id={this.state.drawing.id} /> : null}
       {this.state.showComments ? this.state.drawing.comments.map(drawing => (
@@ -102,13 +102,14 @@ render () {
           title={drawing.title}
           img={drawing.img}
           owner={drawing.owner} // this is an id
-          likes={false}
+          likes={drawing.likes}
           comments={false}
           username={drawing.username}
           score={drawing.score}
           imagekey={drawing.imagekey}
           user={this.props.user}
           isComment={true}
+          drawing={this.state.id}
         />
       )) : null}
     </div>)

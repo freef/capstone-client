@@ -39,8 +39,7 @@ class PostCanvas extends Component {
           .then(() => this.setState({ created: true }))
           .catch(console.log)
       } else {
-        this.setState({ comment: { ...this.state.draw, drawing: this.props.location.state.drawing } }, () => {
-          console.log(this.state.comment)
+        this.setState({ comment: { ...this.state.draw, drawing: this.props.location.state.drawing }, draw: { id: this.props.location.state.drawing } }, () => {
           axios.post(`${apiConfig}/comments`, { data: this.state.comment, contentType: false, processData: false }, config)
             .then((responseData) => this.setState({ comment: { id: responseData.data.comment.id } }))
             .then(() => this.setState({ created: true }))
