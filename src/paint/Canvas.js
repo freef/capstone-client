@@ -13,6 +13,7 @@ class Canvas extends Component {
       clickDrag: [],
       clickColor: [],
       clickSize: [],
+      actionLength: [],
       color: {
         r: 0,
         b: 0,
@@ -56,8 +57,8 @@ onSizeChange = (event) => this.setState({ brushSize: event.target.value })
 getPixelColor = (event) => {
   const context = this.state.context
   const currentTargetRect = event.target.getBoundingClientRect()
-  const eventOffsetX = event.clientX - currentTargetRect.left
-  const eventOffsetY = event.clientY - currentTargetRect.top
+  const eventOffsetX = event.clientX ? event.clientX - currentTargetRect.left : event.touches[0].clientX - currentTargetRect.left
+  const eventOffsetY = event.clientY ? event.clientY - currentTargetRect.top : event.touches[0].clientY - currentTargetRect.top
   const pxData = context.getImageData(eventOffsetX, eventOffsetY, 1, 1)
   this.setState({ color: { r: pxData.data[0], g: pxData.data[1], b: pxData.data[2] } }, () => {
     const red = document.getElementById('r')
@@ -75,11 +76,20 @@ addClick = (x, y, dragging = false) => {
   const clickX = this.state.clickX
   const clickY = this.state.clickY
   const clickDrag = this.state.clickDrag
+  const continueAction = () => {
+    const nl = this.state.actionLength.slice()
+    nl[nl.length - 1] += 1
+    this.setState({ actionLength: nl })
+  }
+  const newAction = () => {
+    this.setState({ actionLength: [...this.state.actionLength, 1] })
+  }
   clickX.push(x)
   clickY.push(y)
   clickDrag.push(dragging)
   this.state.clickColor.push(curColor)
   this.state.clickSize.push(curSize)
+  dragging === true ? continueAction() : newAction()
 }
 
 onUndo = () => {
@@ -88,11 +98,16 @@ onUndo = () => {
   const clickX = this.state.clickX
   const clickY = this.state.clickY
   const clickDrag = this.state.clickDrag
-  clickX.pop()
-  clickY.pop()
-  clickDrag.pop()
-  this.state.clickColor.pop()
-  this.state.clickSize.pop()
+  const nl = this.state.actionLength.slice()
+  for (let i = 0; i < this.state.actionLength[this.state.actionLength.length - 1]; i++) {
+    clickX.pop()
+    clickY.pop()
+    clickDrag.pop()
+    this.state.clickColor.pop()
+    this.state.clickSize.pop()
+  }
+  nl.pop()
+  this.setState({ actionLength: nl })
   context.clearRect(0, 0, context.canvas.width, context.canvas.height)
   this.onBg()
 }
@@ -139,22 +154,23 @@ redraw =() => {
 }
 
 onStartPaint = (e) => {
+  console.log(event)
   if (this.state.eyedropper) {
     this.getPixelColor(e)
     return
   }
   this.paint = true
   const currentTargetRect = event.target.getBoundingClientRect()
-  const eventOffsetX = event.clientX - currentTargetRect.left
-  const eventOffsetY = event.clientY - currentTargetRect.top
+  const eventOffsetX = event.clientX ? event.clientX - currentTargetRect.left : event.touches[0].clientX - currentTargetRect.left
+  const eventOffsetY = event.clientY ? event.clientY - currentTargetRect.top : event.touches[0].clientY - currentTargetRect.top
   this.addClick(eventOffsetX, eventOffsetY)
   this.redraw()
 }
 
 onDraw = (e) => {
   const currentTargetRect = event.target.getBoundingClientRect()
-  const eventOffsetX = event.clientX - currentTargetRect.left
-  const eventOffsetY = event.clientY - currentTargetRect.top
+  const eventOffsetX = event.clientX ? event.clientX - currentTargetRect.left : event.touches[0].clientX - currentTargetRect.left
+  const eventOffsetY = event.clientY ? event.clientY - currentTargetRect.top : event.touches[0].clientY - currentTargetRect.top
   if (this.paint) {
     this.addClick(eventOffsetX, eventOffsetY, true)
     // this.addClick(e.nativeEvent.x - this.state.context.canvas.offsetLeft, e.nativeEvent.y - this.state.context.canvas.offsetTop, true)
