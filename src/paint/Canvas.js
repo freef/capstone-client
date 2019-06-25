@@ -56,8 +56,8 @@ onSizeChange = (event) => this.setState({ brushSize: event.target.value })
 getPixelColor = (event) => {
   const context = this.state.context
   const currentTargetRect = event.target.getBoundingClientRect()
-  const eventOffsetX = event.clientX - currentTargetRect.left
-  const eventOffsetY = event.clientY - currentTargetRect.top
+  const eventOffsetX = event.clientX ? event.clientX - currentTargetRect.left : event.touches[0].clientX - currentTargetRect.left
+  const eventOffsetY = event.clientY ? event.clientY - currentTargetRect.top : event.touches[0].clientY - currentTargetRect.top
   const pxData = context.getImageData(eventOffsetX, eventOffsetY, 1, 1)
   this.setState({ color: { r: pxData.data[0], g: pxData.data[1], b: pxData.data[2] } }, () => {
     const red = document.getElementById('r')
@@ -139,22 +139,23 @@ redraw =() => {
 }
 
 onStartPaint = (e) => {
+  console.log(event)
   if (this.state.eyedropper) {
     this.getPixelColor(e)
     return
   }
   this.paint = true
   const currentTargetRect = event.target.getBoundingClientRect()
-  const eventOffsetX = event.clientX - currentTargetRect.left
-  const eventOffsetY = event.clientY - currentTargetRect.top
+  const eventOffsetX = event.clientX ? event.clientX - currentTargetRect.left : event.touches[0].clientX - currentTargetRect.left
+  const eventOffsetY = event.clientY ? event.clientY - currentTargetRect.top : event.touches[0].clientY - currentTargetRect.top
   this.addClick(eventOffsetX, eventOffsetY)
   this.redraw()
 }
 
 onDraw = (e) => {
   const currentTargetRect = event.target.getBoundingClientRect()
-  const eventOffsetX = event.clientX - currentTargetRect.left
-  const eventOffsetY = event.clientY - currentTargetRect.top
+  const eventOffsetX = event.clientX ? event.clientX - currentTargetRect.left : event.touches[0].clientX - currentTargetRect.left
+  const eventOffsetY = event.clientY ? event.clientY - currentTargetRect.top : event.touches[0].clientY - currentTargetRect.top
   if (this.paint) {
     this.addClick(eventOffsetX, eventOffsetY, true)
     // this.addClick(e.nativeEvent.x - this.state.context.canvas.offsetLeft, e.nativeEvent.y - this.state.context.canvas.offsetTop, true)
