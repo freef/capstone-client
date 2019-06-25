@@ -13,6 +13,7 @@ class Canvas extends Component {
       clickDrag: [],
       clickColor: [],
       clickSize: [],
+      actionLength: [],
       color: {
         r: 0,
         b: 0,
@@ -75,11 +76,20 @@ addClick = (x, y, dragging = false) => {
   const clickX = this.state.clickX
   const clickY = this.state.clickY
   const clickDrag = this.state.clickDrag
+  const continueAction = () => {
+    const nl = this.state.actionLength.slice()
+    nl[nl.length - 1] += 1
+    this.setState({ actionLength: nl })
+  }
+  const newAction = () => {
+    this.setState({ actionLength: [...this.state.actionLength, 1] })
+  }
   clickX.push(x)
   clickY.push(y)
   clickDrag.push(dragging)
   this.state.clickColor.push(curColor)
   this.state.clickSize.push(curSize)
+  dragging === true ? continueAction() : newAction()
 }
 
 onUndo = () => {
@@ -88,11 +98,16 @@ onUndo = () => {
   const clickX = this.state.clickX
   const clickY = this.state.clickY
   const clickDrag = this.state.clickDrag
-  clickX.pop()
-  clickY.pop()
-  clickDrag.pop()
-  this.state.clickColor.pop()
-  this.state.clickSize.pop()
+  const nl = this.state.actionLength.slice()
+  for (let i = 0; i < this.state.actionLength[this.state.actionLength.length - 1]; i++) {
+    clickX.pop()
+    clickY.pop()
+    clickDrag.pop()
+    this.state.clickColor.pop()
+    this.state.clickSize.pop()
+  }
+  nl.pop()
+  this.setState({ actionLength: nl })
   context.clearRect(0, 0, context.canvas.width, context.canvas.height)
   this.onBg()
 }
