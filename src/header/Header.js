@@ -1,9 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import './Header.scss'
 
 const Header = ({ user }) => {
+  const [mobile] = useState(window.innerWidth > 1073)
+  console.log(window.innerWidth)
   const authenticatedOptions = (
     <React.Fragment>
       <Link className='navlink' to="/change-password">Change Password</Link>
@@ -24,15 +26,23 @@ const Header = ({ user }) => {
       <Link className='navlink' to="/">Home</Link>
     </React.Fragment>
   )
+
+  const desktopNav = (
+    <nav>
+      { user && <span>{user.username}</span>}
+      { user ? authenticatedOptions : unauthenticatedOptions }
+      { alwaysOptions }
+    </nav>)
+  const mobileNav = (
+    <nav>
+      <p>mobile</p>
+    </nav>
+  )
   const display = (<header className="main-header navv">
     <div className='logo'>
       <h1 className="title">Splattr</h1>
     </div>
-    <nav>
-      { user && <span>Welcome, {user.username}</span>}
-      { user ? authenticatedOptions : unauthenticatedOptions }
-      { alwaysOptions }
-    </nav>
+    {mobile ? desktopNav : mobileNav}
   </header>)
 
   return display
