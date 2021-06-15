@@ -16,6 +16,11 @@ canvas {
   text-align: center;
 }
 
+input {
+  max-width: 70%;
+}
+
+
 .canvascontainer {
   width: 80%;
   margin: 0.5rem auto;
@@ -87,7 +92,6 @@ canvas {
 
 .navv {
   align-items: center;
-  display: flex;
   justify-content: space-around;
   background-color: pink;
 }
@@ -106,7 +110,6 @@ canvas {
   color: white;
   background-color: lighten(deeppink, 5%);
   text-decoration: none;
-  margin: 1rem;
 }
 
 .drawlink {

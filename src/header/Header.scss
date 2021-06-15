@@ -1,11 +1,11 @@
 $charcoal: #bbb;
 
 .main-header {
-  align-items: center;
   border-bottom: 1px solid $charcoal;
   display: flex;
   height: 100px;
   padding: 0 20px;
+  flex-direction:row;
 
   a,
   span {
@@ -23,7 +23,6 @@ $charcoal: #bbb;
 
 @media (max-width: 600px) {
   .main-header {
-    flex-direction: column;
     font-size: 0.7em;
     height: auto;
     padding: 10px;
@@ -36,8 +35,6 @@ $charcoal: #bbb;
 
 @media (max-width: 450px) {
   .main-header > nav {
-    flex-direction: column;
-    width: 100%;
 
     a,
     span {
